@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asteroid Risk Predictor</title>
+
+    <!-- Link to CSS file -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+    <!-- Inline CSS to set the background image dynamically -->
+    <style>
+        body::before {
+            content: "";
+            background: url("{{ url_for('static', filename='images/psyche-asteroid-illustration-pia24472.webp') }}") no-repeat center center/cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.3;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Asteroid Risk Prediction</h2>
+        
+        <label for="diameter">Diameter (meters):</label>
+        <input type="text" id="diameter" placeholder="Enter diameter">
+        
+        <label for="velocity">Velocity (km/s):</label>
+        <input type="text" id="velocity" placeholder="Enter velocity">
+        
+        <label for="distance">Distance (km):</label>
+        <input type="text" id="distance" placeholder="Enter distance">
+        
+        <button onclick="predictRisk()">Predict</button>
+        <p>Prediction: <span id="result"></span></p>
+    </div>
+
+    <script>
+        function predictRisk() {
+            let diameter = document.getElementById("diameter").value;
+            let velocity = document.getElementById("velocity").value;
+            let distance = document.getElementById("distance").value;
+
+            let data = {
+                "diameter": parseFloat(diameter),
+                "velocity": parseFloat(velocity),
+                "distance": parseFloat(distance)
+            };
+
+            fetch("/predict", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("result").innerText = data.prediction;
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+</body>
+</html>
